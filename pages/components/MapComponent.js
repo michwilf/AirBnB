@@ -23,6 +23,10 @@ const MapComponent = ({ searchResults }) => {
     zoom: 11,
   });
 
+  if (!searchResults) {
+    return null; // Or you can render a loading state or fallback UI
+  }
+
   return (
     <ReactMapGL
       mapStyle="mapbox://styles/mapbox/dark-v11"
