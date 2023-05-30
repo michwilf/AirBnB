@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import * as Icons from "heroicons-react";
 
-export const InfoCard = ({
+const InfoCard = ({
   img,
   location,
   title,
@@ -44,3 +44,6 @@ export const InfoCard = ({
     </div>
   );
 };
+
+
+export default InfoCard;

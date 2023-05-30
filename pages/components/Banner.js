@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 
-export const Banner = () => {
+const Banner = () => {
   return (
     <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] 2xl:h-[700px]">
       <Image
@@ -22,3 +22,5 @@ export const Banner = () => {
     </div>
   );
 };
+
+export default Banner;

@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-export const MediumCard = ({ img, title }) => {
+const MediumCard = ({ img, title }) => {
   return (
     <div className="cursor-pointer hover:scale-105 transform transition duration-300 ease-out">
       <div className="relative h-72 min-w-[300px]">
@@ -11,3 +11,6 @@ export const MediumCard = ({ img, title }) => {
     </div>
   );
 };
+
+
+export default MediumCard;
