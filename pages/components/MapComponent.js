@@ -1,27 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import getCenter from "geolib/es/getCenter";
 
 const MapComponent = ({ searchResults }) => {
-  const [selectedLocation, setSelectedLocation] = useState({
-    latitude: 0,
-    longitude: 0,
-  });
-
-  const coordinates = searchResults.map((result) => ({
-    longitude: result.long,
-    latitude: result.lat,
-  }));
-
-  const center = getCenter(coordinates);
-
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [viewport, setViewport] = useState({
     height: "100%",
     width: "100%",
-    latitude: center.latitude,
-    longitude: center.longitude,
+    latitude: 0,
+    longitude: 0,
     zoom: 11,
   });
+
+  useEffect(() => {
+    if (searchResults && searchResults.length > 0) {
+      const coordinates = searchResults.map((result) => ({
+        longitude: result.long,
+        latitude: result.lat,
+      }));
+      const center = getCenter(coordinates);
+      setViewport((prevViewport) => ({
+        ...prevViewport,
+        latitude: center.latitude,
+        longitude: center.longitude,
+      }));
+    }
+  }, [searchResults]);
 
   if (!searchResults) {
     return null; // Or you can render a loading state or fallback UI
@@ -30,9 +34,9 @@ const MapComponent = ({ searchResults }) => {
   return (
     <ReactMapGL
       mapStyle="mapbox://styles/mapbox/dark-v11"
-      mapboxAccessToken={process.env.mapbox_key}
+      mapboxApiAccessToken={process.env.mapbox_key}
       {...viewport}
-      onMove={(evt) => setViewport(evt.viewport)}
+      onViewportChange={(newViewport) => setViewport(newViewport)}
     >
       {searchResults.map((result) => (
         <div key={result.long}>
@@ -51,9 +55,9 @@ const MapComponent = ({ searchResults }) => {
               📌
             </p>
           </Marker>
-          {selectedLocation.longitude === result.long && (
+          {selectedLocation && selectedLocation.longitude === result.long && (
             <Popup
-              onClose={() => setSelectedLocation({})}
+              onClose={() => setSelectedLocation(null)}
               closeOnClick={true}
               latitude={result.lat}
               longitude={result.long}
@@ -66,6 +70,5 @@ const MapComponent = ({ searchResults }) => {
     </ReactMapGL>
   );
 };
-
 
 export default MapComponent;
