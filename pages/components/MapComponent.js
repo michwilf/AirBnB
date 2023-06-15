@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
-import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import getCenter from "geolib/es/getCenter";
+import markerIcon from "../../public/map-icon.png";
+
+const customMarkerIcon = L.icon({
+  iconUrl: markerIcon,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [0, -41],
+});
+
 
 const MapComponent = ({ searchResults }) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [viewport, setViewport] = useState({
-    height: "100%",
-    width: "100%",
-    latitude: 0,
-    longitude: 0,
-    zoom: 11,
+    latitude: 51.509865,
+    longitude:  -0.118092,
+    zoom: 9,
   });
 
   useEffect(() => {
@@ -27,47 +34,31 @@ const MapComponent = ({ searchResults }) => {
     }
   }, [searchResults]);
 
+  if (typeof window === "undefined") {
+    return null; // Render nothing in non-browser environments
+  }
+
   if (!searchResults) {
     return null; // Or you can render a loading state or fallback UI
   }
 
   return (
-    <ReactMapGL
-      mapStyle="mapbox://styles/mapbox/dark-v11"
-      mapboxApiAccessToken={process.env.mapbox_key}
-      {...viewport}
-      onViewportChange={(newViewport) => setViewport(newViewport)}
+    <MapContainer
+      center={[viewport.latitude, viewport.longitude]}
+      zoom={viewport.zoom}
+      style={{ height: "100%", width: "100%", zIndex: -1 }}
     >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="© OpenStreetMap contributors"
+      />
+
       {searchResults.map((result) => (
-        <div key={result.long}>
-          <Marker
-            longitude={result.long}
-            latitude={result.lat}
-            offsetLeft={-20}
-            offsetTop={-10}
-          >
-            <p
-              onClick={() => setSelectedLocation(result)}
-              role="img"
-              className="cursor-pointer text-2xl animate-bounce"
-              aria-label="push-pin"
-            >
-              📌
-            </p>
-          </Marker>
-          {selectedLocation && selectedLocation.longitude === result.long && (
-            <Popup
-              onClose={() => setSelectedLocation(null)}
-              closeOnClick={true}
-              latitude={result.lat}
-              longitude={result.long}
-            >
-              {result.title}
-            </Popup>
-          )}
-        </div>
+        <Marker position={[result.lat, result.long]} key={result.long} icon={customMarkerIcon}>
+          <Popup>{result.title}</Popup>
+        </Marker>
       ))}
-    </ReactMapGL>
+    </MapContainer>
   );
 };
 

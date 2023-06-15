@@ -3,7 +3,11 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import { useRouter } from "next/router";
 import InfoCard from "./components/InfoCard";
-import MapComponent from "./components/MapComponent";
+import dynamic from "next/dynamic";
+
+const MapComponent = dynamic(() => import("./components/MapComponent"), {
+  ssr: false,
+});
 
 const Search = ({ searchResults }) => {
   const router = useRouter();
