@@ -5,9 +5,10 @@ import { useRouter } from "next/router";
 import InfoCard from "./components/InfoCard";
 import dynamic from "next/dynamic";
 
-const MapComponent = dynamic(() => import("./components/MapComponent"), {
-  ssr: false,
-});
+const MapComponentClient = dynamic(
+  () => import("./components/MapComponentClient"),
+  { ssr: false }
+);
 
 const Search = ({ searchResults }) => {
   const router = useRouter();
@@ -47,8 +48,10 @@ const Search = ({ searchResults }) => {
           </div>
         </section>
         <section className="hidden xl:inline-flex xl:min-w-[600px]">
-          <MapComponent searchResults={searchResults} />
-        </section>
+        {typeof window !== "undefined" && (
+          <MapComponentClient searchResults={searchResults} />
+        )}
+      </section>
       </main>
 
       <Footer />
